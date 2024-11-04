@@ -2,6 +2,7 @@
 
 import Editor from "@monaco-editor/react";
 import { useEffect, useState, FormEvent } from "react";
+import axios from "axios";
 
 interface Project {
   id: string;
@@ -9,109 +10,30 @@ interface Project {
 }
 
 export default function IDE() {
-  const [project, setProject] = useState<Project | null>(null); // Specify type here
-  const [URL, setURL] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [code, setCode] = useState(`public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+  }`);
+  const [output, setOutput] = useState("");
 
-  useEffect(() => {
-    const createProject = async () => {
-      try {
-        const response = await fetch("/api/createproject", {
-          method: "GET",
-        });
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
-        }
-        const responseData = await response.json();
-        setProject(responseData);
-      } catch (error) {
-        console.error("Failed to create project: ", error);
-      }
-    };
+  const handleRun = async (e: FormEvent) => {
+    e.preventDefault();
 
-    createProject();
-  }, []);
-
-  const project_id = project ? project.id : ""; // Safely access project ID
-
-  const sleep = (ms: number) => new Promise(res => setTimeout(res, ms)); // Type 'ms' correctly
-
-  const pollDeploymentStatus = async (deploymentId: any) => {
-    let response;
     try {
-      response = await fetch("/api/getdeployment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: deploymentId }),
-      });
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
+      const response = await axios.post("http://localhost:5000/execute", { code });
+      setOutput(response.data);
     } catch (error) {
-      console.log(error);
+      console.error("Error executing code:", error);
+      setOutput("Error executing code");
     }
-    return response ? await response.json() : null; // Handle possible undefined response
-  };
-
-  const updateStatus = (message: string | null) => {
-    const messageElement = document.querySelector(".ide-message");
-    if (messageElement) {
-      messageElement.textContent = message;
-    }
-  };
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    updateStatus("Deploying code...");
-
-    const codeText = (event.target as HTMLFormElement).querySelector(".monaco-scrollable-element")?.textContent;
-    try {
-      const response = await fetch("/api/createdeployment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ code: codeText, project: project_id }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-
-      let responseData = await response.json();
-      while (responseData["status"] === "pending") {
-        await sleep(3000); // Use sleep instead of delay
-        responseData = await pollDeploymentStatus(responseData["id"]);
-      }
-
-      if (responseData["status"] === "success") {
-        setURL(`http://${responseData.domains[0]}`);
-        updateStatus("Successfully deployed.");
-      } else {
-        updateStatus("Deployment failed.");
-        throw new Error("Deployment failed");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleLoad = () => {
-    setIsLoading(false);
-  };
-
-  const handleError = () => {
-    setIsLoading(true);
   };
 
   return (
     <>
-      <div className="flex flex-col justify-center items-start pt-10 h-screen">
+      <div className="flex justify-center items-start pt-10 h-screen">
         <div className="w-full max-w-4xl p-4 border">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleRun}>
             <div>
               <label htmlFor="comment" className="sr-only">
                 Add your code
@@ -119,11 +41,8 @@ export default function IDE() {
               <Editor
                 height="50vh"
                 defaultLanguage="java"
-                defaultValue={`public class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-    }
-}`}
+                defaultValue={code}
+                onChange={(value) => setCode(value || "")} // Update code on change
               />
             </div>
             <div className="flex justify-between pt-2">
@@ -138,27 +57,13 @@ export default function IDE() {
               </div>
             </div>
           </form>
+          {output && (
+            <div className="mt-4 p-2 border border-gray-300">
+              <h3>Output:</h3>
+              <pre>{output}</pre>
+            </div>
+          )}
         </div>
-        <div className="flex justify-center items-start pt-10 h-screen">
-        <div className="w-full max-w-4xl p-4 border">
-          <div className="mt-4">
-            <p className="ide-message mb-4"></p>
-            {isLoading && (
-              <p className="text-center">Deployed code will run here.</p>
-            )}
-            {URL.length !== 0 ?
-              <iframe
-                src={URL}
-                title="Deployed Project"
-                width="100%"
-                height="300px"
-                onLoad={handleLoad}
-                onError={handleError}
-                style={{ display: isLoading ? "none" : "block" }}
-              /> : null}
-          </div>
-        </div>
-      </div>
       </div>
     </>
   );

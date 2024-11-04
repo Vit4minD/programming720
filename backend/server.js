@@ -1,37 +1,30 @@
+// server.js
 const express = require("express");
 const { exec } = require("child_process");
-const path = require("path");
 const fs = require("fs");
+const path = require("path");
 
 const app = express();
-const port = 5000;
+const PORT = 5000;
 
 app.use(express.json());
 
-// Endpoint to execute Java code
 app.post("/execute", (req, res) => {
-    const code = req.body.code;
+  const { code } = req.body;
 
-    // Create a directory for the code
-    const codeDir = path.join(__dirname, "code");
-    if (!fs.existsSync(codeDir)){
-        fs.mkdirSync(codeDir);
+  // Write the Java code to a temporary file
+  const filePath = path.join(__dirname, "Main.java");
+  fs.writeFileSync(filePath, code);
+
+  // Compile and run the Java code
+  exec(`javac Main.java && java Main`, (error, stdout, stderr) => {
+    if (error) {
+      return res.status(500).send(`Error: ${stderr || error.message}`);
     }
-
-    // Write the code to a file
-    const filePath = path.join(codeDir, "Main.java");
-    fs.writeFileSync(filePath, code);
-
-    // Execute the Docker command to run the code
-    exec(`docker run --rm -v ${codeDir}:/app openjdk:11-jdk bash -c "cd /app && javac Main.java && java Main"`, (error, stdout, stderr) => {
-        if (error) {
-            console.error(`exec error: ${error}`);
-            return res.status(500).send(stderr);
-        }
-        res.send(stdout);
-    });
+    res.send(stdout);
+  });
 });
 
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

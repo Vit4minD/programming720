@@ -29,23 +29,23 @@ const IDE = () => {
   };
 
   return (
-    <div className="h-full">
-      <form onSubmit={handleRun}>
+    <div className="h-full w-full">
+      {/* <form onSubmit={handleRun}> */}
         <Editor
-          height="80vh"
+          height="100vh"
           defaultLanguage="java"
           theme="vs-dark"
           value={code}
           onChange={(value) => setCode(value || "")}
         />
-        <button type="submit" className="bg-indigo-600 text-white p-2 mt-2">
+        {/* <button type="submit" className="bg-indigo-600 text-white p-2 mt-2">
           Run
         </button>
       </form>
       <div className="mt-4 p-4 bg-gray-100 rounded">
         <h2>Output:</h2>
         <pre>{output}</pre>
-      </div>
+      </div> */}
     </div>
   );
 };

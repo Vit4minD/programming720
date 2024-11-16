@@ -1,13 +1,17 @@
 import { useState } from "react";
 import Editor from "@monaco-editor/react";
 import axios from "axios";
+import { stdin } from "process";
 
 const IDE = () => {
-  const [code, setCode] = useState(`public class Main {
+  const [code, setCode] = useState(`import java.util.*;
+import java.io.*;
+
+public class Main {
     public static void main(String[] args) {
         System.out.println("Hello, World!");
     }
-  }`);
+}`);
   const [output, setOutput] = useState<string>("");
 
   const handleRun = async (e: React.FormEvent) => {
@@ -19,9 +23,11 @@ const IDE = () => {
           language: "java",
           version: "15.0.2",
           files: [{ content: code }],
+          stdin:"10\n7\n100\n63\n42\n2520\n1\n23\n72\n60\n625",
         }
       );
-      setOutput(response.data.run.output); // Adjust based on the API's response structure
+      setOutput(response.data.run.output); // Adjust based on the API's response structure\
+      console.log(response.data.run.output)
     } catch (error) {
       console.error("Error executing code:", error);
       setOutput("An error occurred while running the code.");
@@ -30,19 +36,24 @@ const IDE = () => {
 
   return (
     <div className="h-full w-full">
-      {/* <form onSubmit={handleRun}> */}
+      <form onSubmit={handleRun}>
         <Editor
           height="100vh"
           defaultLanguage="java"
           theme="vs-dark"
           value={code}
           onChange={(value) => setCode(value || "")}
+          options={{
+            fontSize: 20, // Change this value to adjust the text size
+            lineNumbers: "on", // Additional customization (optional)
+            minimap: { enabled: false }, // Hide the minimap (optional)
+          }}
         />
-        {/* <button type="submit" className="bg-indigo-600 text-white p-2 mt-2">
+        <button type="submit" className="bg-indigo-600 text-white p-2 mt-2">
           Run
         </button>
       </form>
-      <div className="mt-4 p-4 bg-gray-100 rounded">
+      {/* <div className="mt-4 p-4 bg-gray-100 rounded">
         <h2>Output:</h2>
         <pre>{output}</pre>
       </div> */}

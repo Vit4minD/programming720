@@ -1,19 +1,36 @@
 "use client";
 import { useState, useEffect } from "react";
 import IDE from "./components/IDE";
+import { FaRegPlayCircle } from "react-icons/fa";
+import { IoCloudUploadOutline } from "react-icons/io5";
 
 const Home = () => {
   return (
-    <main className="w-screen h-screen bg-slate-100 flex flex-row">
-      <div className="w-1/2 h-full">
-        <iframe
-          src="/2024/CompSciP_StudyPacket_A_24.pdf" // Replace with your PDF file's path
-          className="w-full h-full"
-          title="PDF Viewer"
-        />
+    <main
+      className="w-screen h-screen max-h-screen overflow-x-hidden overflow-y-hidden bg-[#F0F0F0] flex flex-col"
+      suppressHydrationWarning
+    >
+      <div className="bg-white w-full flex flex-row justify-center gap-x-2 p-2">
+        <button className="btn btn-sm btn-outline text-lg">
+          <FaRegPlayCircle className="text-lg" />
+          Run
+        </button>
+        <button className="btn btn-sm btn-outline btn-success text-lg">
+          <IoCloudUploadOutline className="text-xl"/>
+          Submit
+        </button>
       </div>
-      <div className="w-1/2 h-full">
-        <IDE />
+      <div className="w-full h-full flex flex-row shadow-inner">
+        <div className="w-1/2 h-full flex-row flex p-3 rounded-md shadow-inner">
+          <iframe
+            src="/2024/CompSciP_StudyPacket_A_24.pdf#toolbar=0&navpanes=0"
+            className="w-full h-full rounded-lg"
+            title="PDF Viewer"
+          />
+        </div>
+        <div className="w-1/2 h-full p-3 rounded-lg shadow-2xl">
+          <IDE />
+        </div>
       </div>
     </main>
   );

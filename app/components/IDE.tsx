@@ -35,10 +35,11 @@ public class Main {
   };
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full flex shadow-inner">
       <form onSubmit={handleRun}>
         <Editor
-          height="80vh"
+          width="49vw"
+          className="flex h-full w-full"
           defaultLanguage="java"
           theme="vs-dark"
           value={code}
@@ -49,15 +50,6 @@ public class Main {
             minimap: { enabled: false }, // Hide the minimap (optional)
           }}
         />
-        <div className="w-full p-3 h-fit flex flex-col justify-center">
-          <button
-            type="submit"
-            className=" w-[60%] mx-auto mt-4 hover:bg-green-900 p-2 rounded-lg font-semibold text-white bg-green-500"
-          >
-            Run
-          </button>
-          <p>Output: {output}</p>
-        </div>
       </form>
     </div>
   );

@@ -8,7 +8,6 @@ const Home = () => {
   return (
     <main
       className="w-screen h-screen max-h-screen overflow-x-hidden overflow-y-hidden bg-[#F0F0F0] flex flex-col"
-      suppressHydrationWarning
     >
       <div className="bg-white w-full flex flex-row justify-center gap-x-2 p-2">
         <button className="btn btn-sm btn-outline text-lg">
@@ -16,7 +15,7 @@ const Home = () => {
           Run
         </button>
         <button className="btn btn-sm btn-outline btn-success text-lg">
-          <IoCloudUploadOutline className="text-xl"/>
+          <IoCloudUploadOutline className="text-xl" />
           Submit
         </button>
       </div>

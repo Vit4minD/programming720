@@ -3,14 +3,19 @@ import { useState, useEffect } from "react";
 import IDE from "./components/IDE";
 import { FaRegPlayCircle } from "react-icons/fa";
 import { IoCloudUploadOutline } from "react-icons/io5";
+import data from "./constants/data";
 
 const Home = () => {
+  const [run, setRun] = useState<boolean>(false);
   return (
-    <main
-      className="w-screen h-screen max-h-screen overflow-x-hidden overflow-y-hidden bg-[#F0F0F0] flex flex-col"
-    >
+    <main className="w-screen h-screen max-h-screen overflow-x-hidden overflow-y-hidden bg-[#F0F0F0] flex flex-col">
       <div className="bg-white w-full flex flex-row justify-center gap-x-2 p-2">
-        <button className="btn btn-sm btn-outline text-lg">
+        <button
+          onClick={() => {
+            setRun(!run);
+          }}
+          className="btn btn-sm btn-outline text-lg"
+        >
           <FaRegPlayCircle className="text-lg" />
           Run
         </button>
@@ -28,7 +33,7 @@ const Home = () => {
           />
         </div>
         <div className="w-1/2 h-full p-3 rounded-lg shadow-2xl">
-          <IDE />
+          <IDE run={run} setRun={setRun} />
         </div>
       </div>
     </main>

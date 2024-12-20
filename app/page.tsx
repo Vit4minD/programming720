@@ -6,9 +6,7 @@ import { FaRegPlayCircle } from "react-icons/fa";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import data from "./constants/data";
 import { ToastContainer, toast } from 'react-toastify';
-import { lineSpinner } from 'ldrs'
-
-lineSpinner.register()
+import HashLoader from "react-spinners/HashLoader";
 
 const Home = () => {
   const [run, setRun] = useState<boolean>(false);
@@ -45,23 +43,13 @@ const Home = () => {
             }}
             className="btn btn-sm btn-outline text-lg"
           >
-            {run ? <l-line-spinner
-              size="20"
-              stroke="3"
-              speed="1"
-              color="black"
-            ></l-line-spinner> : <FaRegPlayCircle className="text-lg" />
+            {run ? <HashLoader size="25" /> : <FaRegPlayCircle className="text-lg" />
             }
           </button>
           <button onClick={() => {
             setSubmit(!submit);
           }} className="btn btn-sm btn-outline btn-success text-lg">
-            {submit ? <l-line-spinner
-              size="20"
-              stroke="3"
-              speed="1"
-              color="green"
-            ></l-line-spinner> : <>
+            {submit ? <HashLoader size="25" color="green" /> : <>
               <IoCloudUploadOutline className="text-xl" />
               Submit
             </>

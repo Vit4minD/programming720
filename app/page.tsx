@@ -26,8 +26,8 @@ const Home = () => {
       </div>
       <div className="w-full h-full flex flex-row shadow-inner">
         <div className="w-1/2 h-full flex-row flex p-3 rounded-md shadow-inner">
-          <iframe
-            src="/2024/CompSciP_StudyPacket_A_24.pdf#toolbar=0&navpanes=0"
+          <iframe 
+            src="/2024/invitationalA/CompSciP_StudyPacket_A_24.pdf#toolbar=0&navpanes=0"
             className="w-full h-full rounded-lg"
             title="PDF Viewer"
           />

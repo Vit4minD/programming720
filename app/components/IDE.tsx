@@ -22,7 +22,7 @@ public class Main {
 }`);
   const [output, setOutput] = useState<string>("");
   const [question, setQuestion] = useState<string>(
-    "1. " + data()["2024"].invitationalA[0]
+    "1. " + data()["2024"].invitationalA.problems[0]
   );
   const [input, setInput] = useState<string>("");
   useEffect(() => {
@@ -70,7 +70,7 @@ public class Main {
             tabIndex={0}
             className="dropdown-content menu bg-base-100 rounded-box z-[1] p-2 w-52 shadow"
           >
-            {data()["2024"].invitationalA.map((item, index) => (
+            {data()["2024"].invitationalA.problems.map((item, index) => (
               <li key={index}>
                 <a
                   onClick={() => {

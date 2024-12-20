@@ -1,6 +1,7 @@
 const data = () => ({
-    "2024": {
-      invitationalA: [
+  "2024": {
+    invitationalA: {
+      problems: [
         "akansha",
         "andrew",
         "bautista",
@@ -14,7 +15,11 @@ const data = () => ({
         "rodrigo",
         "svetlana",
       ],
-    },
-  });
+      data: [
 
-  export default data;
+      ]
+    }
+  },
+});
+
+export default data;

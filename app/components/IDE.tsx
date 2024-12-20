@@ -5,6 +5,7 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import data from "../constants/data";
 import { toast } from 'react-toastify';
 
+
 const IDE = ({
   run,
   setRun,
@@ -45,14 +46,20 @@ public class Main {
   useEffect(() => {
     if (run) {
       handleRun();
-      setRun(false);
+      const timeoutId = setTimeout(() => {
+        setRun(false);
+      }, 1000); // Delay of 2000 ms (2 seconds)
+      return () => clearTimeout(timeoutId);
     }
-  }, [run, setRun, question]);
+  }, [run, setRun]);
 
   useEffect(() => {
     if (submit) {
       handleSubmit();
-      setSubmit(false);
+      const timeoutId = setTimeout(() => {
+        setSubmit(false);
+      }, 1000); // Delay of 2000 ms (2 seconds)
+      return () => clearTimeout(timeoutId);
     }
   }, [submit, setSubmit]);
 

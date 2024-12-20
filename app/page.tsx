@@ -6,6 +6,9 @@ import { FaRegPlayCircle } from "react-icons/fa";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import data from "./constants/data";
 import { ToastContainer, toast } from 'react-toastify';
+import { lineSpinner } from 'ldrs'
+
+lineSpinner.register()
 
 const Home = () => {
   const [run, setRun] = useState<boolean>(false);
@@ -15,7 +18,7 @@ const Home = () => {
   useEffect(() => {
     if (correct) {
       toast.success("Correct!");
-      setScore(score+60)
+      setScore(score + 60)
       setCorrect(false)
     }
   }, [correct])
@@ -42,14 +45,27 @@ const Home = () => {
             }}
             className="btn btn-sm btn-outline text-lg"
           >
-            <FaRegPlayCircle className="text-lg" />
-            Run
+            {run ? <l-line-spinner
+              size="20"
+              stroke="3"
+              speed="1"
+              color="black"
+            ></l-line-spinner> : <FaRegPlayCircle className="text-lg" />
+            }
           </button>
           <button onClick={() => {
             setSubmit(!submit);
           }} className="btn btn-sm btn-outline btn-success text-lg">
-            <IoCloudUploadOutline className="text-xl" />
-            Submit
+            {submit ? <l-line-spinner
+              size="20"
+              stroke="3"
+              speed="1"
+              color="green"
+            ></l-line-spinner> : <>
+              <IoCloudUploadOutline className="text-xl" />
+              Submit
+            </>
+            }
           </button>
         </div>
         <Timer />

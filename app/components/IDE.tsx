@@ -3,7 +3,7 @@ import Editor from "@monaco-editor/react";
 import axios from "axios";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import data from "../constants/data";
-
+import { toast } from 'react-toastify';
 
 const IDE = ({
   run,
@@ -82,6 +82,8 @@ public class Main {
       );
       const submitOutput = await response.data.run.output || response.data.output || "No output";
       setCorrect(submitOutput == sol)
+      if (!(submitOutput == sol))
+        toast.error("Bruh");
     } catch (error) {
       console.error("Error executing code:", error);
     }

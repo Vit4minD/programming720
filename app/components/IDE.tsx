@@ -1,16 +1,24 @@
 import { useState, useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import axios from "axios";
-import { stdin } from "process";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import data from "../constants/data";
+
 
 const IDE = ({
   run,
   setRun,
+  submit,
+  setSubmit,
+  correct,
+  setCorrect,
 }: {
   run: boolean;
   setRun: React.Dispatch<React.SetStateAction<boolean>>;
+  submit: boolean;
+  setSubmit: React.Dispatch<React.SetStateAction<boolean>>;
+  correct: boolean;
+  setCorrect: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [code, setCode] = useState(`import java.util.*;
 import java.io.*;
@@ -24,14 +32,61 @@ public class Main {
   const [question, setQuestion] = useState<string>(
     "1. " + data()["2024"].invitationalA.problems[0]
   );
-  const [input, setInput] = useState<string>("");
+  const [input, setInput] = useState<any>();
+
+  async function readDatFile(fileName: string): Promise<string> {
+    const response = await fetch(`/${fileName}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${fileName}: ${response.statusText}`);
+    }
+    return response.text();
+  }
+
   useEffect(() => {
     if (run) {
       handleRun();
-      // Reset run after execution to avoid re-running
       setRun(false);
     }
-  }, [run, setRun]);
+  }, [run, setRun, question]);
+
+  useEffect(() => {
+    if (submit) {
+      handleSubmit();
+      setSubmit(false);
+    }
+  }, [submit, setSubmit]);
+
+  const handleSubmit = async () => {
+    try {
+      let dat;
+      if (question.indexOf("1") == 0) {
+        dat = "";
+      } else {
+        dat = await readDatFile("2024/invitationalA/A2024JudgeData/" + question.substring(question.indexOf(" ") + 1) + ".dat")
+          .then((fileContent) => {
+            return fileContent;
+          })
+      }
+      const sol = await readDatFile("2024/invitationalA/A2024JudgeData/" + question.substring(question.indexOf(" ") + 1) + ".out")
+        .then((fileContent) => {
+          return fileContent;
+        })
+      const response = await axios.post(
+        "https://emkc.org/api/v2/piston/execute",
+        {
+          language: "java",
+          version: "15.0.2",
+          files: [{ content: code }],
+          stdin: dat,
+        }
+      );
+      const submitOutput = await response.data.run.output || response.data.output || "No output";
+      setCorrect(submitOutput == sol)
+    } catch (error) {
+      console.error("Error executing code:", error);
+    }
+  };
+
   const handleRun = async () => {
     try {
       const response = await axios.post(

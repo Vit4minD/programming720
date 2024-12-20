@@ -15,9 +15,6 @@ const data = () => ({
         "rodrigo",
         "svetlana",
       ],
-      data: [
-
-      ]
     }
   },
 });

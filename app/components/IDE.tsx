@@ -3,10 +3,11 @@ import Editor from "@monaco-editor/react";
 import axios from "axios";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import data from "../constants/data";
-import { toast } from 'react-toastify';
-
+import { toast } from "react-toastify";
 
 const IDE = ({
+  year,
+  comp,
   run,
   setRun,
   submit,
@@ -14,6 +15,8 @@ const IDE = ({
   correct,
   setCorrect,
 }: {
+  year: string;
+  comp: string;
   run: boolean;
   setRun: React.Dispatch<React.SetStateAction<boolean>>;
   submit: boolean;
@@ -31,7 +34,7 @@ public class Main {
 }`);
   const [output, setOutput] = useState<string>("");
   const [question, setQuestion] = useState<string>(
-    "1. " + data()["2024"].invitationalA.problems[0]
+    "1. " + data[year]?.[comp]?.problems[0]
   );
   const [input, setInput] = useState<any>();
 
@@ -69,15 +72,21 @@ public class Main {
       if (question.indexOf("1") == 0) {
         dat = "";
       } else {
-        dat = await readDatFile("2024/invitationalA/A2024JudgeData/" + question.substring(question.indexOf(" ") + 1) + ".dat")
-          .then((fileContent) => {
-            return fileContent;
-          })
-      }
-      const sol = await readDatFile("2024/invitationalA/A2024JudgeData/" + question.substring(question.indexOf(" ") + 1) + ".out")
-        .then((fileContent) => {
+        dat = await readDatFile(
+          year+"/"+comp+"/judgeData/" +
+            question.substring(question.indexOf(" ") + 1) +
+            ".dat"
+        ).then((fileContent) => {
           return fileContent;
-        })
+        });
+      }
+      const sol = await readDatFile(
+        year+"/"+comp+"/judgeData/" +
+          question.substring(question.indexOf(" ") + 1) +
+          ".out"
+      ).then((fileContent) => {
+        return fileContent;
+      });
       const response = await axios.post(
         "https://emkc.org/api/v2/piston/execute",
         {
@@ -87,10 +96,10 @@ public class Main {
           stdin: dat,
         }
       );
-      const submitOutput = await response.data.run.output || response.data.output || "No output";
-      setCorrect(submitOutput == sol)
-      if (!(submitOutput == sol))
-        toast.error("Bruh");
+      const submitOutput =
+        (await response.data.run.output) || response.data.output || "No output";
+      setCorrect(submitOutput == sol);
+      if (!(submitOutput == sol)) toast.error("Bruh");
     } catch (error) {
       console.error("Error executing code:", error);
     }
@@ -134,7 +143,7 @@ public class Main {
             tabIndex={0}
             className="dropdown-content menu bg-base-100 rounded-box z-[1] p-2 w-52 shadow"
           >
-            {data()["2024"].invitationalA.problems.map((item, index) => (
+            {data[year]?.[comp]?.problems.map((item: any, index: any) => (
               <li key={index}>
                 <a
                   onClick={() => {
